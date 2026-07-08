@@ -1,0 +1,8 @@
+version: "0.0.1"
+description: >-
+  Library for connecting Mirabox devices to Teensy micro controllers
+url: https://exit42.eu/
+files:
+  exclude:
+    - "examples/**/*"
+    - "extras/**/*"

@@ -1,0 +1,23 @@
+{
+  "name": "Mirabox Teensy",
+  "keywords": "teensy, Mirabox",
+  "description": "Library for connecting Mirabox devices to Teensy micro controllers",
+  "homepage": "https://exit42.eu",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/???"
+  },
+  "version": "0.0.1",
+  "authors": {
+    "name": "Wouter",
+    "url": "https://exit42.eu"
+  },
+  "export": {
+    "include": ["src", "examples", "LICENSE.txt", "Mirabox.h"]
+  },
+  "frameworks": "*",
+  "platforms": "*",
+  "build": {
+    "libArchive": false
+  }
+}
