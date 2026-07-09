@@ -20,6 +20,9 @@ public:
 
     bool isConnected() const { return mydevice != nullptr && driver_ != nullptr; }
     bool sendPacket(const uint8_t *buffer, int cb = -1, unsigned long timeout_ms = 10000);
+    // HID GET_REPORT(Input) control transfer; desktop SDKs do this during init
+    // and some StreamDock firmware needs it before it starts sending events.
+    bool requestInputReport(uint8_t report_id, uint16_t length);
     void pumpHost() { host_.Task(); }
     uint16_t inputReportSize() const;
     uint16_t outputReportSize() const;

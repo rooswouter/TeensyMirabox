@@ -20,21 +20,16 @@
 
 #include <USBHost_t36.h>
 #include "MiraBoxHIDInput.h"
-#include "USBDeviceInfo.h"
 #include "Transport/LibUSBHIDAPI.h"
 #include "Devices/Devices.h"
 #include <SD.h>
 #include <SPI.h>
 USBHost myusb;
 
-USBDeviceInfo dinfo(myusb);
 USBHIDParser hid1(myusb);
 USBHIDParser hid2(myusb);
-USBHIDParser hid3(myusb);
-USBHIDParser hid4(myusb);
-USBHIDParser hid5(myusb);
 
-MiraBoxHIDInput hdc1(myusb, 1);  // keyboard HID
+//MiraBoxHIDInput hdc1(myusb, 1);  // keyboard HID
 MiraBoxHIDInput hdc2(myusb, 2);  // StreamDock control HID
 LibUSBHIDAPI transport(hdc2);
 
@@ -46,9 +41,9 @@ USBDriver *drivers[] = {&hid1, &hid2};
 const char *driver_names[CNT_DEVICES] = {"HID1", "HID2"};
 bool driver_active[CNT_DEVICES] = {false};
 
-USBHIDInput *hiddrivers[] = {&hdc1, &hdc2};
+USBHIDInput *hiddrivers[] = {&hdc2};
 #define CNT_HIDDEVICES (sizeof(hiddrivers) / sizeof(hiddrivers[0]))
-const char *hid_driver_names[CNT_HIDDEVICES] = {"hdc1", "hdc2"};
+const char *hid_driver_names[CNT_HIDDEVICES] = {"hdc2"};
 bool hid_driver_active[CNT_HIDDEVICES] = {false};
 
 bool device_ready = false;

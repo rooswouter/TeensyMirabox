@@ -39,6 +39,7 @@ private:
     struct Slot {
         USBHIDParser hid_parser_1;
         USBHIDParser hid_parser_2;
+        USBHIDParser hid_parser_3;
         MiraBoxHIDInput keyboard;
         MiraBoxHIDInput control;
         LibUSBHIDAPI transport;

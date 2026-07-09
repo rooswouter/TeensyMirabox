@@ -20,6 +20,7 @@ static bool isK1Pro(uint16_t vendor_id, uint16_t product_id) {
 DeviceManager::Slot::Slot(USBHost &host, uint8_t slotIndex)
     : hid_parser_1(host),
       hid_parser_2(host),
+      hid_parser_3(host),
       keyboard(host, 1),
       control(host, 2),
       transport(control),

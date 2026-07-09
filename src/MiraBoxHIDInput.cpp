@@ -17,9 +17,6 @@ hidclaim_t MiraBoxHIDInput::claim_collection(USBHIDParser *driver, Device_t *dev
   // index 1 = boot keyboard HID, index 2 = StreamDock control HID (non-boot interface).
   // USBHost_t36 only calls hid_process_in_data() on topusage_drivers[0], so index 2
   // must claim the first collection on the control interface (not a later 0xFFA0 one).
-  printf("claim_collection() index_: %d\n", index_);
-  printf("claim_collection() driver->interfaceSubClass(): %d\n", driver->interfaceSubClass());
-  printf("claim_collection() driver->interfaceProtocol(): %d\n", driver->interfaceProtocol());
   if (index_ == 1) {
     if (driver->interfaceSubClass() != 1 || driver->interfaceProtocol() !=1) {
       if (show_raw_data) Serial.println(" - NO (not boot keyboard)");
@@ -28,6 +25,14 @@ hidclaim_t MiraBoxHIDInput::claim_collection(USBHIDParser *driver, Device_t *dev
   } else if (index_ == 2) {
     if (driver->interfaceSubClass() == 1 && driver->interfaceProtocol() == 1) {
       if (show_raw_data) Serial.println(" - NO (boot keyboard interface)");
+      return CLAIM_NO;
+    }
+    // The StreamDock control collection lives on a vendor-defined usage page
+    // (0xFFA0 in the desktop SDK). Reject standard pages (mouse/consumer/etc.)
+    // so multi-interface devices like the 293S bind the right interface.
+    const uint16_t usage_page = (uint16_t)(topusage >> 16);
+    if (usage_page < 0xFF00) {
+      if (show_raw_data) Serial.println(" - NO (not vendor-defined usage page)");
       return CLAIM_NO;
     }
   }
@@ -61,6 +66,11 @@ hidclaim_t MiraBoxHIDInput::claim_collection(USBHIDParser *driver, Device_t *dev
     static uint8_t tx_buf2[1024] __attribute__((aligned(32)));
     driver->setRXBuffers(rx_buf1, rx_buf2, 0);
     driver->setTXBuffers(tx_buf1, tx_buf2, 0);
+
+    // Windows/Linux HID class drivers send SET_IDLE to every HID interface
+    // during enumeration. Some StreamDock firmware waits for it before it
+    // starts sending input reports, so mimic the OS behavior here.
+    driver->sendControlPacket(0x21, 10, 0, driver->interfaceNumber(), 0, nullptr);
   }
 
   // if Boot Mouse - then set idle
@@ -114,6 +124,18 @@ bool MiraBoxHIDInput::sendPacket(const uint8_t *buffer, int cb, unsigned long ti
     yield();
   }
   return false;
+}
+
+bool MiraBoxHIDInput::requestInputReport(uint8_t report_id, uint16_t length) {
+  if (!driver_) {
+    return false;
+  }
+  static uint8_t report_buf[1024] __attribute__((aligned(32)));
+  if (length > sizeof(report_buf)) {
+    length = sizeof(report_buf);
+  }
+  // GET_REPORT: bmRequestType 0xA1, bRequest 0x01, wValue = (Input << 8) | report_id
+  return driver_->sendControlPacket(0xA1, 0x01, 0x0100 | report_id, driver_->interfaceNumber(), length, report_buf);
 }
 
 uint16_t MiraBoxHIDInput::inputReportSize() const {
@@ -173,6 +195,10 @@ bool MiraBoxHIDInput::hid_process_in_data(const Transfer_t *transfer) {
       handle_keyboard_data(transfer);
       return !show_formated_data;
     case 2:
+      if (show_raw_data) {
+        Serial.print(" IN: ");
+        dump_hexbytes(transfer->buffer, min(transfer->length, (uint32_t)32), 0);
+      }
       queueInputReport((const uint8_t *)transfer->buffer, transfer->length);
       handle_mirabox_buttons_data(transfer);
       // Always bypass HID parse(); StreamDock protocol needs raw report bytes.

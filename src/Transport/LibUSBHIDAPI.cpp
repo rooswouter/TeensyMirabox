@@ -15,13 +15,6 @@ void writeUint32BE(uint8_t *buffer, uint32_t value) {
     buffer[3] = (uint8_t)(value & 0xFF);
 }
 
-size_t trimTrailingNulls(const uint8_t *data, size_t length) {
-    while (length > 0 && data[length - 1] == 0) {
-        --length;
-    }
-    return length;
-}
-
 uint8_t s_tx_buffer[LibUSBHIDAPI::DEFAULT_REPORT_SIZE + 1];
 
 } // namespace
@@ -47,6 +40,21 @@ bool LibUSBHIDAPI::canWrite() const {
 }
 
 std::string LibUSBHIDAPI::getFirmwareVersion() {
+    if (!is_open_ || !hid_.isConnected()) {
+        return "";
+    }
+    // The desktop SDK issues a HID GET_REPORT(Input) control transfer here
+    // (hidapi get_input_report) on every init. Mirror it: some StreamDock
+    // firmware treats it as part of the host handshake.
+    const uint16_t len = input_report_size_ > 0
+        ? input_report_size_
+        : (uint16_t)(DEFAULT_REPORT_SIZE + 1);
+    hid_.requestInputReport(report_id_, len);
+    const unsigned long deadline = millis() + 50;
+    while ((long)(millis() - deadline) < 0) {
+        hid_.pumpHost();
+        yield();
+    }
     return "";
 }
 
@@ -59,9 +67,12 @@ size_t LibUSBHIDAPI::read(uint8_t *buffer, size_t capacity, int timeout_ms) {
 
     const unsigned long deadline = millis() + (timeout_ms < 0 ? 0UL : (unsigned long)timeout_ms);
     do {
+        // Return the full report, zero padding included. The Python SDK does the
+        // same, and the packet parsers index fixed byte positions (e.g. key/state
+        // at bytes 9/10), so trimming trailing nulls can cut a valid packet short.
         const size_t bytes_read = hid_.read(buffer, capacity);
         if (bytes_read > 0) {
-            return trimTrailingNulls(buffer, bytes_read);
+            return bytes_read;
         }
         if (timeout_ms <= 0) {
             break;
@@ -85,12 +96,17 @@ size_t LibUSBHIDAPI::reportPayloadSize() const {
 }
 
 size_t LibUSBHIDAPI::paddedReportSize() const {
+    // On-wire report length. hidapi pads to output_report_size and strips the
+    // leading report-ID byte when it is 0, so that's what devices expect.
+    // Do NOT use the endpoint size here: endpoints can be smaller than the
+    // report (e.g. 64-byte full-speed endpoints) and the host driver already
+    // splits one transfer into multiple wire packets.
+    if (output_report_size_ > 0) {
+        return (report_id_ == 0) ? (size_t)(output_report_size_ - 1) : (size_t)output_report_size_;
+    }
     const uint16_t driver_out = hid_.outputReportSize();
     if (driver_out > 0) {
         return driver_out;
-    }
-    if (output_report_size_ > 0) {
-        return output_report_size_;
     }
     return DEFAULT_REPORT_SIZE + 1;
 }
@@ -147,13 +163,17 @@ void LibUSBHIDAPI::sendCrt(const char *cmd, const uint8_t *params, size_t params
             memcpy(s_tx_buffer, custom_crt, crt_len);
             offset = crt_len;
         } else {
-            s_tx_buffer[0] = report_id_;
-            s_tx_buffer[1] = 'C';
-            s_tx_buffer[2] = 'R';
-            s_tx_buffer[3] = 'T';
-            s_tx_buffer[4] = 0;
-            s_tx_buffer[5] = 0;
-            offset = 6;
+            // hidapi strips a leading 0x00 report ID before sending, so on the
+            // wire report-ID-0 packets start directly with "CRT". Only devices
+            // with a real report ID (K1Pro: 0x04) include it in the packet.
+            if (report_id_ != 0) {
+                s_tx_buffer[offset++] = report_id_;
+            }
+            s_tx_buffer[offset++] = 'C';
+            s_tx_buffer[offset++] = 'R';
+            s_tx_buffer[offset++] = 'T';
+            s_tx_buffer[offset++] = 0;
+            s_tx_buffer[offset++] = 0;
         }
     }
     const size_t cmd_len = strlen(cmd);
@@ -181,13 +201,16 @@ void LibUSBHIDAPI::sendCrt(const char *cmd, const uint8_t *params, size_t params
     }
 
     const size_t chunk_size = reportPayloadSize();
+    const size_t header_len = (report_id_ != 0) ? 1 : 0;
     constexpr unsigned long kBulkWriteTimeoutMs = 500;
 
     for (size_t i = 0; i < bulk_len; i += chunk_size) {
         const size_t chunk_len = min(chunk_size, bulk_len - i);
-        s_tx_buffer[0] = report_id_;
-        memcpy(s_tx_buffer + 1, bulk + i, chunk_len);
-        if (!writePacket(s_tx_buffer, 1 + chunk_len, kBulkWriteTimeoutMs)) {
+        if (header_len) {
+            s_tx_buffer[0] = report_id_;
+        }
+        memcpy(s_tx_buffer + header_len, bulk + i, chunk_len);
+        if (!writePacket(s_tx_buffer, header_len + chunk_len, kBulkWriteTimeoutMs)) {
             return;
         }
         hid_.pumpHost();

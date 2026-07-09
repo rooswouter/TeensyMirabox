@@ -14,8 +14,10 @@ int setDualKeyImage(StreamDock &device, int key, const uint8_t *data, size_t len
 
 void configureReport1025(LibUSBHIDAPI &transport) {
     transport.setReportSize(513, 1025, 0);
+    transport.setReportId(0x00);
 }
 
 void configureReport513(LibUSBHIDAPI &transport) {
     transport.setReportSize(513, 513, 0);
+    transport.setReportId(0x00);
 }

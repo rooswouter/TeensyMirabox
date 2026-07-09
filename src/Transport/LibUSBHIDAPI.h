@@ -112,7 +112,8 @@ private:
 
     MiraBoxHIDInput &hid_;
     bool is_open_ = false;
-    uint8_t report_id_ = 0x04;
+    // Matches the Python transport default; K1Pro overrides to 0x04 in set_device().
+    uint8_t report_id_ = 0x00;
     uint16_t input_report_size_ = 513;
     uint16_t output_report_size_ = 1024;
     uint16_t feature_report_size_ = 0;
