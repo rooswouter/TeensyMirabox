@@ -97,6 +97,8 @@ enum class DIPSwitchId {
 enum class Direction {
     LEFT,
     RIGHT,
+    UP,
+    DOWN,
 };
 
 struct InputEvent {
