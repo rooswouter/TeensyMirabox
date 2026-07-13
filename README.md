@@ -17,7 +17,7 @@ This is a port of the [StreamDock Python SDK](https://github.com/MiraboxLab/Stre
 The library auto-detects devices by USB VID/PID and instantiates the matching driver class:
 
 | Class | Device |Tested|
-|-------|--------|
+|-------|--------|--------|
 | `StreamDock293` | Stream Dock 293 | [] |
 | `StreamDock293V3` | Stream Dock 293 V3 | [] |
 | `StreamDock293s` | Stream Dock 293S |  [x] |
@@ -92,15 +92,10 @@ Sketch
 
 - Keys are numbered **1 … N** (not zero-based).
 - Call `refresh()` after uploading images to push them to the display.
-- Image size and rotation depend on the device; query `key_image_format()` on your `StreamDock` instance.
+- Scaling and rotation of images is not implemented! When using `set_key_image(key, "file.jpg")`, the path is prepended
+with the {device name}\key directory to read the correctly scaled and rotated file.  per device. Use convert_images.py to create these images! 
 - `set_key_image(key, "file.jpg")` reads from the **SD card** root (or path relative to SD root).
 
-Example formats:
-
-| Device | Key size | Format | Rotation |
-|--------|----------|--------|----------|
-| K1 Pro | 64×64 | JPEG | −90° |
-| 293S | 85×85 | JPEG | 90° |
 
 ## Input events
 

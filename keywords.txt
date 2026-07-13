@@ -1,2 +1,298 @@
-# functions
+#######################################
+# Syntax Coloring Map For Mirabox
+#######################################
 
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+DeviceManager	KEYWORD1
+StreamDock	KEYWORD1
+GifController	KEYWORD1
+MiraBoxHIDInput	KEYWORD1
+LibUSBHIDAPI	KEYWORD1
+FeatureOption	KEYWORD1
+DeviceConfig	KEYWORD1
+StreamDockXLConfig	KEYWORD1
+StreamDockN4ProConfig	KEYWORD1
+DeviceConfigEvent	KEYWORD1
+LedInfo	KEYWORD1
+InputEvent	KEYWORD1
+ImageFormat	KEYWORD1
+HidDeviceInfo	KEYWORD1
+USBVendorIDs	KEYWORD1
+USBProductIDs	KEYWORD1
+K1Pro	KEYWORD1
+StreamDock293	KEYWORD1
+StreamDock293V3	KEYWORD1
+StreamDock293s	KEYWORD1
+StreamDock293sV3	KEYWORD1
+StreamDockN3	KEYWORD1
+StreamDockN4	KEYWORD1
+StreamDockN4Pro	KEYWORD1
+StreamDockN1	KEYWORD1
+StreamDockXL	KEYWORD1
+StreamDockMini	KEYWORD1
+StreamDockM3	KEYWORD1
+StreamDockM18	KEYWORD1
+EventType	KEYWORD1
+ButtonKey	KEYWORD1
+KnobId	KEYWORD1
+DIPSwitchId	KEYWORD1
+Direction	KEYWORD1
+device_type	KEYWORD1
+ImageFileFormat	KEYWORD1
+DeviceMode	KEYWORD1
+SkinMode	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+# DeviceManager
+begin	KEYWORD2
+poll	KEYWORD2
+setDeviceChangeCallback	KEYWORD2
+deviceCount	KEYWORD2
+deviceAt	KEYWORD2
+
+# StreamDock
+open	KEYWORD2
+init	KEYWORD2
+close	KEYWORD2
+read	KEYWORD2
+set_device	KEYWORD2
+disconnected	KEYWORD2
+clearIcon	KEYWORD2
+clearAllIcon	KEYWORD2
+wakeScreen	KEYWORD2
+refresh	KEYWORD2
+set_led_brightness	KEYWORD2
+set_led_color	KEYWORD2
+reset_led_effect	KEYWORD2
+send_config	KEYWORD2
+poll	KEYWORD2
+set_key_callback	KEYWORD2
+set_config_callback	KEYWORD2
+set_raw_read_callback	KEYWORD2
+set_touchscreen_callback	KEYWORD2
+gifer	KEYWORD2
+set_key_gif_stream	KEYWORD2
+clear_key_gif	KEYWORD2
+set_background_gif_stream	KEYWORD2
+clear_background_gif	KEYWORD2
+start_gif_loop	KEYWORD2
+stop_gif_loop	KEYWORD2
+gif_loop_status	KEYWORD2
+getPath	KEYWORD2
+get_serial_number	KEYWORD2
+get_device_type	KEYWORD2
+set_brightness	KEYWORD2
+set_key_image	KEYWORD2
+set_key_imageData	KEYWORD2
+set_touchscreen_image	KEYWORD2
+get_image_key	KEYWORD2
+decode_input_event	KEYWORD2
+decode_device_config_event	KEYWORD2
+image_keys	KEYWORD2
+key_image_format	KEYWORD2
+touchscreen_image_format	KEYWORD2
+secondscreen_image_format	KEYWORD2
+set_frame_background	KEYWORD2
+set_secondscreen_image	KEYWORD2
+decode_touch_bar_event	KEYWORD2
+set_touch_bar_callback	KEYWORD2
+switch_mode	KEYWORD2
+change_page	KEYWORD2
+set_n1_skin_bitmap	KEYWORD2
+magnetic_calibration	KEYWORD2
+
+# GifController
+set_key_gif_stream	KEYWORD2
+clear_background_animation	KEYWORD2
+start_animation_loop	KEYWORD2
+stop_animation_loop	KEYWORD2
+animation_loop_status	KEYWORD2
+update	KEYWORD2
+
+# K1Pro
+set_keyboard_backlight_brightness	KEYWORD2
+set_keyboard_lighting_effects	KEYWORD2
+set_keyboard_lighting_speed	KEYWORD2
+set_keyboard_rgb_backlight	KEYWORD2
+keyboard_os_mode_switch	KEYWORD2
+keyboard_mode	KEYWORD2
+
+# MiraBoxHIDInput
+usage	KEYWORD2
+isConnected	KEYWORD2
+sendPacket	KEYWORD2
+requestInputReport	KEYWORD2
+pumpHost	KEYWORD2
+inputReportSize	KEYWORD2
+outputReportSize	KEYWORD2
+hasReadData	KEYWORD2
+
+# LibUSBHIDAPI
+open	KEYWORD2
+close	KEYWORD2
+read	KEYWORD2
+canWrite	KEYWORD2
+getFirmwareVersion	KEYWORD2
+clearTaskQueue	KEYWORD2
+read_	KEYWORD2
+wakeupScreen	KEYWORD2
+magneticCalibration	KEYWORD2
+refreshScreen	KEYWORD2
+setKeyBrightness	KEYWORD2
+clearAllKeys	KEYWORD2
+clearKey	KEYWORD2
+setKeyImageStream	KEYWORD2
+setBackgroundBitmap	KEYWORD2
+setBackgroundImageStream	KEYWORD2
+setBackgroundFrameStream	KEYWORD2
+clearBackgroundFrameStream	KEYWORD2
+setLedBrightness	KEYWORD2
+setLedColor	KEYWORD2
+resetLedColor	KEYWORD2
+setLedColorIndividual	KEYWORD2
+setKeyboardBacklightBrightness	KEYWORD2
+setKeyboardLightingEffects	KEYWORD2
+setKeyboardLightingSpeed	KEYWORD2
+setKeyboardRgbBacklight	KEYWORD2
+keyboardOsModeSwitch	KEYWORD2
+setDeviceConfig	KEYWORD2
+changeMode	KEYWORD2
+changePage	KEYWORD2
+setN1SkinBitmap	KEYWORD2
+heartbeat	KEYWORD2
+notifyDisconnected	KEYWORD2
+setReportId	KEYWORD2
+getReportId	KEYWORD2
+setReportSize	KEYWORD2
+featureReportSize	KEYWORD2
+getLastError	KEYWORD2
+configureK1ProDefaults	KEYWORD2
+
+# InputEvent factories
+unknown	KEYWORD2
+button	KEYWORD2
+knobPress	KEYWORD2
+knobRotate	KEYWORD2
+swipe	KEYWORD2
+dipSwitch	KEYWORD2
+touchPoint	KEYWORD2
+
+# DeviceConfig
+to_bytes	KEYWORD2
+reset	KEYWORD2
+
+# Debug helpers
+indent_level	KEYWORD2
+dump_hexbytes	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+ENABLE_ANIMATEDGIF	LITERAL1
+CONFIG_DEFAULT	LITERAL1
+CONFIG_ON	LITERAL1
+CONFIG_OFF	LITERAL1
+BACKGROUND_INDEX	LITERAL1
+DEFAULT_DELAY_MS	LITERAL1
+DEFAULT_REPORT_SIZE	LITERAL1
+KEY_COUNT	LITERAL1
+FILE_READ	LITERAL1
+FILE_WRITE	LITERAL1
+
+#######################################
+# Enumeration Values (LITERAL2)
+#######################################
+
+# EventType
+BUTTON	LITERAL2
+KNOB_ROTATE	LITERAL2
+KNOB_PRESS	LITERAL2
+SWIPE	LITERAL2
+TOUCH_POINT	LITERAL2
+DIP_SWITCH	LITERAL2
+UNKNOWN	LITERAL2
+
+# ButtonKey
+BTN_1	LITERAL2
+BTN_2	LITERAL2
+BTN_3	LITERAL2
+BTN_4	LITERAL2
+BTN_5	LITERAL2
+BTN_6	LITERAL2
+BTN_7	LITERAL2
+BTN_8	LITERAL2
+BTN_9	LITERAL2
+BTN_10	LITERAL2
+BTN_11	LITERAL2
+BTN_12	LITERAL2
+BTN_13	LITERAL2
+BTN_14	LITERAL2
+BTN_15	LITERAL2
+BTN_16	LITERAL2
+BTN_17	LITERAL2
+BTN_18	LITERAL2
+BTN_19	LITERAL2
+BTN_20	LITERAL2
+BTN_21	LITERAL2
+BTN_22	LITERAL2
+BTN_23	LITERAL2
+BTN_24	LITERAL2
+BTN_25	LITERAL2
+BTN_26	LITERAL2
+BTN_27	LITERAL2
+BTN_28	LITERAL2
+BTN_29	LITERAL2
+BTN_30	LITERAL2
+BTN_31	LITERAL2
+BTN_32	LITERAL2
+
+# KnobId
+KNOB_1	LITERAL2
+KNOB_2	LITERAL2
+KNOB_3	LITERAL2
+KNOB_4	LITERAL2
+
+# DIPSwitchId
+DIP_1	LITERAL2
+DIP_2	LITERAL2
+
+# Direction
+LEFT	LITERAL2
+RIGHT	LITERAL2
+UP	LITERAL2
+DOWN	LITERAL2
+
+# device_type
+dock_universal	LITERAL2
+dock_293	LITERAL2
+dock_293v3	LITERAL2
+dock_293s	LITERAL2
+dock_293sv3	LITERAL2
+dock_m3	LITERAL2
+dock_m18	LITERAL2
+dock_n1	LITERAL2
+dock_n3	LITERAL2
+dock_n4	LITERAL2
+dock_n4pro	LITERAL2
+dock_xl	LITERAL2
+k1pro	LITERAL2
+dock_mini	LITERAL2
+
+# ImageFileFormat
+JPEG	LITERAL2
+PNG	LITERAL2
+
+# StreamDockN1 DeviceMode
+KEYBOARD	LITERAL2
+CALCULATOR	LITERAL2
+DOCK	LITERAL2
+
+# StreamDockN1 SkinMode
+KEYBOARD_LOCK	LITERAL2
