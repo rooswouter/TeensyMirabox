@@ -8,36 +8,36 @@ This is a port of the [StreamDock Python SDK](https://github.com/MiraboxLab/Stre
 
 | Requirement | Notes |
 |-------------|--------|
-| **MCU** | Teensy 4.x recommended (USB host + enough RAM for image transfers) |
+| **MCU** | Teensy 4.x or 3.6 recommended (USB host + enough RAM for image transfers) |
 | **USB** | USB Host port wired to the StreamDock device |
-| **SD card** | Built-in SD (`BUILTIN_SDCARD`) used by `set_key_image()` to load JPEG files |
+| **SD card** | (optional) Built-in SD (`BUILTIN_SDCARD`) used by `set_key_image()` to load JPEG files |
 
 ### Supported devices
 
 The library auto-detects devices by USB VID/PID and instantiates the matching driver class:
 
-| Class | Device |
+| Class | Device |Tested|
 |-------|--------|
-| `StreamDock293` | Stream Dock 293 |
-| `StreamDock293V3` | Stream Dock 293 V3 |
-| `StreamDock293s` | Stream Dock 293S |
-| `StreamDock293sV3` | Stream Dock 293S V3 |
-| `StreamDockN3` | Stream Dock N3 |
-| `StreamDockN4` | Stream Dock N4 |
-| `StreamDockN4Pro` | Stream Dock N4 Pro |
-| `StreamDockN1` | Stream Dock N1 |
-| `StreamDockXL` | Stream Dock XL |
-| `StreamDockM3` | Stream Dock M3 |
-| `StreamDockM18` | Stream Dock M18 |
-| `StreamDockMini` | Stream Dock Mini |
-| `K1Pro` | K1 Pro |
+| `StreamDock293` | Stream Dock 293 | [] |
+| `StreamDock293V3` | Stream Dock 293 V3 | [] |
+| `StreamDock293s` | Stream Dock 293S |  [x] |
+| `StreamDock293sV3` | Stream Dock 293S V3 | [] |
+| `StreamDockN3` | Stream Dock N3 | [x] |
+| `StreamDockN4` | Stream Dock N4 | [x] |
+| `StreamDockN4Pro` | Stream Dock N4 Pro | [] |
+| `StreamDockN1` | Stream Dock N1 | [] |
+| `StreamDockXL` | Stream Dock XL | [] |
+| `StreamDockM3` | Stream Dock M3 | [] |
+| `StreamDockM18` | Stream Dock M18 | [] |
+| `StreamDockMini` | Stream Dock Mini | [] |
+| `K1Pro` | K1 Pro | [x] |
 
 ## Installation
 
 1. Copy or symlink this folder into your Arduino `libraries` directory, e.g.  
    `Documents/Arduino/libraries/Mirabox`
 2. Install **Teensyduino** with the **USBHost_t36** library enabled.
-3. Select a Teensy 4.x board and compile an example sketch.
+3. Select a Teensy 3.6 or 4.x board and compile an example sketch.
 
 ## Quick start
 
@@ -126,7 +126,6 @@ K1Pro *k1 = static_cast<K1Pro *>(device);
 k1->keyboard_mode(1);
 ```
 
-`DeviceManager` skips auto-`init()` for the K1 Pro and waits 500 ms after connect before calling your `onAdded` callback — mirror the deferred init pattern in `k1pro.ino` if you integrate manually.
 
 ## Debugging HID traffic
 
@@ -143,7 +142,7 @@ Leave both `false` in production sketches.
 |--------|-------------|
 | `examples/Mirabox/Mirabox.ino` | `DeviceManager` hotplug, images from SD, key callbacks |
 | `examples/k1pro/k1pro.ino` | Manual K1 Pro bring-up with serial commands |
-| `examples/SlotMachine/SlotMachine.ino` | Animated slot machine demo |
+
 
 ## API reference
 
@@ -160,7 +159,3 @@ Public API documentation is in the header files (Doxygen / Arduino style):
 
 See `library.properties` and the parent [StreamDock Device SDK](https://github.com/MiraboxLab/StreamDock-Device-SDK) repository for license terms.
 
-## Related projects
-
-- [StreamDock Python SDK](../../Python-SDK/) — desktop reference implementation
-- [StreamDock C++ SDK](../../CPP-SDK/) — native desktop library

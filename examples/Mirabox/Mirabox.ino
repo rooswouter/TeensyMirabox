@@ -5,7 +5,7 @@ USBHost myusb;
 DeviceManager dm(myusb);
 
 
-const char *images[] = { "85x85/key1.jpg", "85x85/key2.jpg", "85x85/key3.jpg", "85x85/key4.jpg", "85x85/key5.jpg", "85x85/key6.jpg"};
+const char *images[] = { "maarten.jpg", "maarten2.jpg", "maarten3.jpg", "maarten4.jpg", "maarten5.jpg", "maarten6.jpg", "maarten7.jpg"};
 void onAdded(StreamDock* device) {
   Serial.println("Device added");
   printf("ID: %s\n", device->id().c_str());
@@ -20,12 +20,9 @@ void onAdded(StreamDock* device) {
   }
 
   device->clearAllIcon();
-  // image_keys() can exceed the images[] array size (293S has 18 keys),
-  // so clamp the loop to avoid reading past the end of the array.
   const int image_count = (int)(sizeof(images) / sizeof(images[0]));
-  const int keys_to_set = min(device->image_keys(), image_count);
-  for (int i = 0; i < keys_to_set; i++) {
-    device->set_key_image(i+1, images[i]);
+  for (int i = 0; i < device->image_keys(); i++) {
+    device->set_key_image(i+1, images[i % image_count]);
   }
   device->set_key_callback(key_callback);
   device->refresh();

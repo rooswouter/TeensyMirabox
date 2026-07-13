@@ -31,7 +31,7 @@ public:
     ImageFormat key_image_format() const override;
     ImageFormat touchscreen_image_format() const override;
 
-    /** @brief Set keyboard backlight brightness (0–6). */
+    /** @brief Set keyboard backlight brightness (0–100). */
     void set_keyboard_backlight_brightness(int brightness);
 
     /** @brief Set keyboard lighting effect index. */
