@@ -90,6 +90,10 @@ void K1Pro::keyboard_mode(int mode) {
         Serial.println("K1Pro: keyboard_mode: 0");
     } else if (mode == 1) {
         Serial.println("K1Pro: keyboard_mode: 1");
+        // Match the proven k1pro.ino bring-up order: report format first, then a
+        // heartbeat (CONNECT) before the init command sequence.
+        set_device();
+        transport.heartbeat();
         init();
         clearAllIcon();
         refresh();

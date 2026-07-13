@@ -24,7 +24,7 @@ int StreamDockN4Pro::set_brightness(int percent) {
 
 int StreamDockN4Pro::set_key_imageData(int key, const uint8_t *data, size_t length) {
     if (key >= 11 && key <= 14) {
-        return set_seondscreen_image(key, data, length);
+        return set_secondscreen_image(key, data, length);
     }
     return setDualKeyImage(*this, key, data, length);
 }
@@ -116,7 +116,7 @@ void StreamDockN4Pro::set_touch_bar_callback(TouchscreenCallback callback) {
     set_touchscreen_callback(callback);
 }
 
-int StreamDockN4Pro::set_seondscreen_image(int key, const uint8_t *data, size_t length) {
+int StreamDockN4Pro::set_secondscreen_image(int key, const uint8_t *data, size_t length) {
     return setDualKeyImage(*this, key, data, length);
 }
 

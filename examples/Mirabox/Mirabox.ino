@@ -4,6 +4,7 @@
 USBHost myusb;
 DeviceManager dm(myusb);
 
+
 const char *images[] = { "85x85/key1.jpg", "85x85/key2.jpg", "85x85/key3.jpg", "85x85/key4.jpg", "85x85/key5.jpg", "85x85/key6.jpg"};
 void onAdded(StreamDock* device) {
   Serial.println("Device added");
@@ -47,7 +48,9 @@ void key_callback(StreamDock *device, const InputEvent &event)
     case EventType::KNOB_PRESS:
       Serial.printf("Knob %d pressed %s\n", (int)event.knob_id, event.state == 1 ? "Pressed" : "Released" );
       break;
-
+    case EventType::SWIPE:
+      Serial.printf("Swiped %s\n", event.direction == Direction::LEFT ? "Left" : event.direction == Direction::RIGHT ? "Right" : event.direction == Direction::UP ? "Up" : "Down" );
+      break;
     default:
       break;
 
@@ -63,7 +66,7 @@ void setup() {
   dm.setDeviceChangeCallback(onAdded, onRemoved);
   dm.begin(true, true);
 
-  MiraBoxHIDInput::show_raw_data = false;
+  MiraBoxHIDInput::show_raw_data = true;
   MiraBoxHIDInput::show_formated_data = false;
   myusb.begin();  // required
 }

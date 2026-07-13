@@ -2,6 +2,12 @@
 
 #include <cstdint>
 
+/**
+ * @file FeatrueOption.h
+ * @brief Device model identifier and capability flags.
+ */
+
+/** @brief Identifies the concrete StreamDock product type. */
 enum class device_type : uint8_t {
     dock_universal = 0,
     dock_293 = 1,
@@ -19,6 +25,10 @@ enum class device_type : uint8_t {
     dock_mini = 13,
 };
 
+/**
+ * @class FeatrueOption
+ * @brief Runtime capability flags set by each device in `set_device()`.
+ */
 class FeatrueOption {
 public:
     bool hasRGBLed = false;

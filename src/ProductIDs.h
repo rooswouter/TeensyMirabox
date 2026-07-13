@@ -2,9 +2,15 @@
 
 #include <stdint.h>
 
-// Mirrors src/ProductIDs.py (Python) but for the Teensy C++ build.
-// These IDs are used to decide which StreamDock device class to instantiate.
+/**
+ * @file ProductIDs.h
+ * @brief USB vendor and product IDs for StreamDock device detection.
+ *
+ * Mirrors `ProductIDs.py` from the Python SDK. Used by `DeviceManager` to
+ * instantiate the correct `StreamDock` subclass.
+ */
 
+/** @brief USB vendor IDs (VID). */
 struct USBVendorIDs {
     static constexpr uint16_t USB_VID_293 = 0x5500;
     static constexpr uint16_t USB_VID_293V3 = 0x6603;
@@ -33,6 +39,7 @@ struct USBVendorIDs {
     static constexpr uint16_t USB_VID_MiniW = 0x5548;
 };
 
+/** @brief USB product IDs (PID). */
 struct USBProductIDs {
     static constexpr uint16_t USB_PID_STREAMDOCK_293 = 0x1001;
     static constexpr uint16_t USB_PID_STREAMDOCK_293V3 = 0x1005;
@@ -61,4 +68,3 @@ struct USBProductIDs {
     static constexpr uint16_t USB_PID_Mini = 0x1036;
     static constexpr uint16_t USB_PID_MiniW = 0x1037;
 };
-

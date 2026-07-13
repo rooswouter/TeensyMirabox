@@ -3,14 +3,20 @@
 #include <cstdint>
 #include <cstddef>
 
+/**
+ * @file InputTypes.h
+ * @brief Unified input event types for StreamDock devices.
+ */
+
+/** @brief Category of user input reported by a device. */
 enum class EventType {
-    BUTTON,
-    KNOB_ROTATE,
-    KNOB_PRESS,
-    SWIPE,
-    TOUCH_POINT,
-    DIP_SWITCH,
-    UNKNOWN,
+    BUTTON,       /**< Physical LCD key press or release. */
+    KNOB_ROTATE,  /**< Rotary encoder turned left or right. */
+    KNOB_PRESS,   /**< Rotary encoder pushed in. */
+    SWIPE,        /**< Touch swipe gesture. */
+    TOUCH_POINT,  /**< Absolute touch coordinates. */
+    DIP_SWITCH,   /**< DIP switch change. */
+    UNKNOWN,      /**< Unrecognized hardware code. */
 };
 
 // Teensyduino defines KEY_0..KEY_9 in keylayouts.h as USB keycodes.
@@ -45,8 +51,12 @@ enum class EventType {
 #undef KEY_9
 #endif
 
-// NOTE: Teensyduino's core defines KEY_0..KEY_9 as macros (USB keycodes).
-// Using BTN_* avoids macro collisions in user sketches and core headers.
+/**
+ * @brief Logical LCD key index (1-based).
+ *
+ * Named BTN_* instead of KEY_* to avoid collisions with Teensyduino
+ * `keylayouts.h` macros.
+ */
 enum class ButtonKey : int {
     BTN_1 = 1,
     BTN_2,
@@ -82,6 +92,7 @@ enum class ButtonKey : int {
     BTN_32,
 };
 
+/** @brief Rotary encoder identifier. */
 enum class KnobId {
     KNOB_1,
     KNOB_2,
@@ -89,11 +100,13 @@ enum class KnobId {
     KNOB_4,
 };
 
+/** @brief DIP switch identifier. */
 enum class DIPSwitchId {
     DIP_1,
     DIP_2,
 };
 
+/** @brief Direction for knobs, swipes, and DIP switches. */
 enum class Direction {
     LEFT,
     RIGHT,
@@ -101,6 +114,9 @@ enum class Direction {
     DOWN,
 };
 
+/**
+ * @brief Normalized input event delivered to `StreamDock::KeyCallback`.
+ */
 struct InputEvent {
     EventType event_type = EventType::UNKNOWN;
     ButtonKey key = ButtonKey::BTN_1;
@@ -111,17 +127,23 @@ struct InputEvent {
     bool has_dip_id = false;
     Direction direction = Direction::LEFT;
     bool has_direction = false;
-    int state = 0;
+    int state = 0;          /**< 1 = pressed / active, 0 = released. */
     int x = 0;
     int y = 0;
     bool has_touch = false;
     const uint8_t *raw_data = nullptr;
     size_t raw_data_len = 0;
 
+    /** @return An event with `EventType::UNKNOWN`. */
     static InputEvent unknown() {
         return InputEvent{};
     }
 
+    /**
+     * @brief Build a button press/release event.
+     * @param key Logical key.
+     * @param state 1 = pressed, 0 = released.
+     */
     static InputEvent button(ButtonKey key, int state) {
         InputEvent event;
         event.event_type = EventType::BUTTON;
@@ -131,6 +153,7 @@ struct InputEvent {
         return event;
     }
 
+    /** @brief Build a knob push event. */
     static InputEvent knobPress(KnobId knob_id, int state) {
         InputEvent event;
         event.event_type = EventType::KNOB_PRESS;
@@ -140,6 +163,7 @@ struct InputEvent {
         return event;
     }
 
+    /** @brief Build a knob rotation event. */
     static InputEvent knobRotate(KnobId knob_id, Direction direction) {
         InputEvent event;
         event.event_type = EventType::KNOB_ROTATE;
@@ -150,6 +174,7 @@ struct InputEvent {
         return event;
     }
 
+    /** @brief Build a swipe gesture event. */
     static InputEvent swipe(Direction direction) {
         InputEvent event;
         event.event_type = EventType::SWIPE;
@@ -158,6 +183,7 @@ struct InputEvent {
         return event;
     }
 
+    /** @brief Build a DIP switch event. */
     static InputEvent dipSwitch(DIPSwitchId dip_id, int state, Direction direction, bool has_direction) {
         InputEvent event;
         event.event_type = EventType::DIP_SWITCH;
@@ -169,6 +195,7 @@ struct InputEvent {
         return event;
     }
 
+    /** @brief Build a touch coordinate event. */
     static InputEvent touchPoint(int x, int y, const uint8_t *raw_data, size_t raw_data_len) {
         InputEvent event;
         event.event_type = EventType::TOUCH_POINT;

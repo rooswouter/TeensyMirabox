@@ -9,7 +9,7 @@ void MiraBoxHIDInput::init() {
 }
 
 hidclaim_t MiraBoxHIDInput::claim_collection(USBHIDParser *driver, Device_t *dev, uint32_t topusage) {
-  
+  printf("MiraBoxHIDInput::claim_collection(driver: %p, dev: %p, topusage: %x)\n", driver, dev, topusage);
   if (show_raw_data) {
     Serial.printf("MiraBoxHIDInput(%u : %p : %p) Claim: %x:%x usage: %x", index_, this, driver, dev->idVendor, dev->idProduct, topusage);
     Serial.printf(" SubClass: %x Protocol: %x",  driver->interfaceSubClass(), driver->interfaceProtocol());

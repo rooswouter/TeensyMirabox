@@ -2,6 +2,15 @@
 
 #include "StreamDock.h"
 
+/**
+ * @file StreamDockN3.h
+ * @brief Drivers for Stream Dock N3 and N4 devices.
+ */
+
+/**
+ * @class StreamDockN3
+ * @brief Stream Dock N3 (18 keys).
+ */
 class StreamDockN3 : public StreamDock {
 public:
     static constexpr int KEY_COUNT = 18;
@@ -17,6 +26,10 @@ public:
     ImageFormat touchscreen_image_format() const override;
 };
 
+/**
+ * @class StreamDockN4
+ * @brief Stream Dock N4 (14 keys + secondary screen keys).
+ */
 class StreamDockN4 : public StreamDock {
 public:
     static constexpr int KEY_COUNT = 14;
@@ -30,6 +43,13 @@ public:
     InputEvent decode_input_event(int hardware_code, int state) override;
     ImageFormat key_image_format() const override;
     ImageFormat touchscreen_image_format() const override;
+
+    /** @return Image format for secondary screen keys. */
     ImageFormat secondscreen_image_format() const;
-    int set_seondscreen_image(int key, const uint8_t *data, size_t length);
+
+    /**
+     * @brief Set image on a secondary screen key.
+     * @return 0 on success, negative on error.
+     */
+    int set_secondscreen_image(int key, const uint8_t *data, size_t length);
 };

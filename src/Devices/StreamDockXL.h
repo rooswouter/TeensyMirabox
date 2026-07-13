@@ -3,6 +3,15 @@
 #include "StreamDock.h"
 #include "../DeviceConfig.h"
 
+/**
+ * @file StreamDockXL.h
+ * @brief Driver for Stream Dock XL (32-key layout).
+ */
+
+/**
+ * @class StreamDockXL
+ * @brief Stream Dock XL with 32 LCD keys and optional XL configuration.
+ */
 class StreamDockXL : public StreamDock {
 public:
     static constexpr int KEY_COUNT = 36;
@@ -19,5 +28,9 @@ public:
     ImageFormat key_image_format() const override;
     ImageFormat touchscreen_image_format() const override;
 
+    /**
+     * @brief Upload a partial background frame.
+     * @return 0 on success, negative on error.
+     */
     int set_frame_background(const uint8_t *data, size_t length, int width, int height);
 };

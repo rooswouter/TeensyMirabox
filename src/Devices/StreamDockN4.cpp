@@ -14,7 +14,7 @@ int StreamDockN4::set_brightness(int percent) {
 
 int StreamDockN4::set_key_imageData(int key, const uint8_t *data, size_t length) {
     if (key >= 11 && key <= 14) {
-        return set_seondscreen_image(key, data, length);
+        return set_secondscreen_image(key, data, length);
     }
     return setDualKeyImage(*this, key, data, length);
 }
@@ -56,9 +56,9 @@ InputEvent StreamDockN4::decode_input_event(int hardware_code, int state) {
         return event;
     }
     switch(hardware_code) {
-        case 0x38:
-            return InputEvent::swipe(Direction::LEFT);
         case 0x39:
+            return InputEvent::swipe(Direction::LEFT);
+        case 0x38:
             return InputEvent::swipe(Direction::RIGHT);
         case 0xb1:
             return InputEvent::swipe(Direction::UP);
@@ -81,6 +81,6 @@ ImageFormat StreamDockN4::secondscreen_image_format() const {
     return {176, 112, ImageFileFormat::JPEG, 180, false, false};
 }
 
-int StreamDockN4::set_seondscreen_image(int key, const uint8_t *data, size_t length) {
+int StreamDockN4::set_secondscreen_image(int key, const uint8_t *data, size_t length) {
     return setDualKeyImage(*this, key, data, length);
 }
