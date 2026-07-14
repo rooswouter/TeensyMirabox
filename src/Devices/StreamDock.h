@@ -5,6 +5,7 @@
 #include "../InputTypes.h"
 #include "../Transport/LibUSBHIDAPI.h"
 #include "../DeviceConfigEvent.h"
+#include "../KeyboardEvent.h"
 #include "../DeviceConfig.h"
 #include "GifController.h"
 
@@ -42,6 +43,9 @@ public:
 
     /** @brief Called when a K1 Pro configuration packet is received. */
     using ConfigCallback = void (*)(StreamDock *, const DeviceConfigEvent &);
+
+    /** @brief Called when a K1 Pro keyboardpacket is received. */
+    using KeyboardCallback = void (*)(StreamDock *, const KeyboardEvent &);
 
     /** @brief Called for every raw HID input report (before parsing). */
     using RawReadCallback = void (*)(StreamDock *, const uint8_t *, size_t);
@@ -145,6 +149,9 @@ public:
 
     /** @brief Register handler for K1 Pro configuration packets. */
     void set_config_callback(ConfigCallback callback);
+
+    /** @brief Register handler for K1 Pro keyboard packets. */
+    void set_keyboard_callback(KeyboardCallback callback);
 
     /** @brief Register handler for raw HID input bytes. */
     void set_raw_read_callback(RawReadCallback callback);
@@ -271,6 +278,7 @@ protected:
     void dispatch_touchscreen_event(const InputEvent &event);
     bool is_input_event_packet(const uint8_t *data, size_t length) const;
     bool is_input_device_config_packet(const uint8_t *data, size_t length) const;
+    bool is_input_keyboard_packet(const uint8_t *data, size_t length) const;
 
     
 
@@ -282,6 +290,7 @@ private:
 
     KeyCallback key_callback_ = nullptr;
     ConfigCallback config_callback_ = nullptr;
+    KeyboardCallback keyboard_callback_ = nullptr;
     RawReadCallback raw_read_callback_ = nullptr;
     TouchscreenCallback touchscreen_callback_ = nullptr;
 

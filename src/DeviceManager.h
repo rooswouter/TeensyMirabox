@@ -11,6 +11,7 @@
 #include "Devices/K1Pro.h"
 #include "Devices/StreamDock.h"
 
+
 /**
  * @file DeviceManager.h
  * @brief Teensy USB-host device manager for StreamDock / Mirabox hardware.
@@ -74,6 +75,9 @@ public:
      * @return Pointer to the device, or `nullptr` if index is out of range.
      */
     StreamDock *deviceAt(size_t idx) const;
+
+    static bool isK1Pro(uint16_t vendor_id, uint16_t product_id);
+
 
 private:
     static constexpr uint8_t MAX_SLOTS = 1;

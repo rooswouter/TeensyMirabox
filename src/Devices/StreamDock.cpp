@@ -77,6 +77,7 @@ void StreamDock::close(bool notify) {
     transport.close();
     key_callback_ = nullptr;
     config_callback_ = nullptr;
+    keyboard_callback_ = nullptr;
     raw_read_callback_ = nullptr;
     touchscreen_callback_ = nullptr;
 }
@@ -159,6 +160,10 @@ void StreamDock::set_key_callback(KeyCallback callback) {
 
 void StreamDock::set_config_callback(ConfigCallback callback) {
     config_callback_ = callback;
+}
+
+void StreamDock::set_keyboard_callback(KeyboardCallback callback) {
+    keyboard_callback_ = callback;
 }
 
 void StreamDock::set_raw_read_callback(RawReadCallback callback) {
@@ -267,14 +272,20 @@ bool StreamDock::is_input_device_config_packet(const uint8_t *data, size_t lengt
         && data[5] == 0x46
         && data[6] == 0x47;
 }
+bool StreamDock::is_input_keyboard_packet(const uint8_t *data, size_t length) const {
+    if (feature_option.deviceType != device_type::k1pro) {
+        return false;
+    }
+    return length == 8;
+}
 
 void StreamDock::process_read_buffer(const uint8_t *data, size_t length) {
     handle_raw_read(data, length);
-    if (length < 10) {
+    if (length < 8) {
         return;
     }
     
-    if (data[9] == 0xFF) {
+    if (length >= 10 && data[9] == 0xFF) {
         return;
     }
     
@@ -289,14 +300,16 @@ void StreamDock::process_read_buffer(const uint8_t *data, size_t length) {
             key_callback_(this, event);
         }
         return;
-    }
-
-    if (is_input_device_config_packet(data, length)) {
+    } else if (is_input_device_config_packet(data, length)) {
         const DeviceConfigEvent event = decode_device_config_event(data, length);
         if (event.valid && config_callback_ != nullptr) {
             config_callback_(this, event);
         }
-    }
+    } else if (is_input_keyboard_packet(data, length)) {
+        if (keyboard_callback_ != nullptr) {
+            keyboard_callback_(this, KeyboardEvent(data, length));
+        }
+    } 
 }
 
 void StreamDock::service_heartbeat() {

@@ -1,3 +1,11 @@
+/*
+  Example usage for the K1Pro keyboard.
+  The knobs set the backlight mode, and color.
+  The Teensy is setup as keyboard, and regular keypresses are directly set via the Keyboard.set_key functions
+*/
+
+
+
 #include <USBHost_t36.h>
 #include "DeviceManager.h"
 
@@ -24,6 +32,8 @@ void onAdded(StreamDock* device) {
     Serial.println("K1Pro setting to SDK Mode");
     k1Pro = (K1Pro*)(device);
     k1Pro->keyboard_mode(1);
+  } else {
+    Serial.println("K1Pro Example requires a K1Pro attached!");
   }
 
   device->clearAllIcon();
@@ -32,6 +42,7 @@ void onAdded(StreamDock* device) {
     device->set_key_image(i+1, images[i % image_count]);
   }
   device->set_key_callback(key_callback);
+  device->set_keyboard_callback(keyboard_callback);
   device->refresh();
 }
 
@@ -63,6 +74,24 @@ void key_callback(StreamDock *device, const InputEvent &event)
 
   }
 }
+
+
+void keyboard_callback(StreamDock *device, const KeyboardEvent &event)
+{
+  // Byte 0: modifiers
+  // Byte 1: ???
+  // Byte 2-8 Keys
+  Keyboard.set_modifier((event.keycode[0] << 8)  | event.keycode[0]);
+  Keyboard.set_key1(event.keycode[2]);
+  Keyboard.set_key2(event.keycode[3]);
+  Keyboard.set_key3(event.keycode[4]);
+  Keyboard.set_key4(event.keycode[5]);
+  Keyboard.set_key5(event.keycode[6]);
+  Keyboard.set_key6(event.keycode[7]);
+  Keyboard.send_now();
+
+}
+
 
 void update_effects(const InputEvent &event)
 {
@@ -104,7 +133,7 @@ void update_colors(const InputEvent &event)
     color[i] = min(color[i], 255);
   }
   k1Pro->set_keyboard_rgb_backlight(color[0], color[1], color[2]);
-  printf("Color = [%i, %i, %i]", color[0], color[1], color[2]);
+  printf("Color = [%i, %i, %i]\n", color[0], color[1], color[2]);
 }
 
 void setup() {

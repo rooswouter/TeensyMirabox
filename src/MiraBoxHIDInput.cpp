@@ -1,4 +1,6 @@
+#include "DeviceManager.h"
 #include "MiraBoxHIDInput.h"
+
 bool MiraBoxHIDInput::show_raw_data = false;
 bool MiraBoxHIDInput::show_formated_data = false;
 bool MiraBoxHIDInput::changed_data_only = false;
@@ -9,32 +11,40 @@ void MiraBoxHIDInput::init() {
 }
 
 hidclaim_t MiraBoxHIDInput::claim_collection(USBHIDParser *driver, Device_t *dev, uint32_t topusage) {
-  printf("MiraBoxHIDInput::claim_collection(driver: %p, dev: %p, topusage: %x)\n", driver, dev, topusage);
   if (show_raw_data) {
     Serial.printf("MiraBoxHIDInput(%u : %p : %p) Claim: %x:%x usage: %x", index_, this, driver, dev->idVendor, dev->idProduct, topusage);
     Serial.printf(" SubClass: %x Protocol: %x",  driver->interfaceSubClass(), driver->interfaceProtocol());
   }
 
+
   const uint16_t usage_page = (uint16_t)(topusage >> 16);
-  const uint16_t usage = (uint16_t)(topusage & 0xffff);
-  if (mydevice != NULL && dev != mydevice) {
+  if (false && mydevice != NULL && dev != mydevice) {
     if (show_raw_data) Serial.println("- NO (Device)");
     return CLAIM_NO;
   }
-
+  
   /* 
+    const uint16_t usage = (uint16_t)(topusage & 0xffff);
     For 293S, N3   
     if (usage_page != 0xFFA0 || index_ != 2) {
     For K1Pro
     if (usage_page != 0x000C || index_ != 2) {
+    If we want to also claim regular keyboard messages from the K1Pro, we can add 0x0001 to the list  
   */
-  if (!(usage_page == 0x000C || usage_page == 0xFFA0) || index_ != 2) {
-    if (show_raw_data) Serial.println(" - NO (not vendor-defined usage page)");
-    return CLAIM_NO;
+  if(DeviceManager::isK1Pro(dev->idVendor, dev->idProduct)) {
+    if (!(usage_page == 0x0001 || usage_page == 0x000C) || index_ != 2) {
+      if (show_raw_data) Serial.println(" - NO (not vendor-defined usage page)");
+      return CLAIM_NO;
+    }
+  } else {
+    if (usage_page != 0xFFA0 || index_ != 2) {
+      if (show_raw_data) Serial.println(" - NO (not vendor-defined usage page)");
+      return CLAIM_NO;
+    }
   }
+
   tmp_index_++;
   bool dump_hid_info = (usage_ == 0);
-
 
   mydevice = dev;
   collections_claimed++;
@@ -246,15 +256,6 @@ void MiraBoxHIDInput::hid_input_data(uint32_t usage, int32_t value) {
     indent_level(hid_input_begin_level_);
     Serial.printf("usage=%X, value=%d ", usage, value);
     if ((value >= ' ') && (value <= '~')) Serial.printf(":%c", value);
-
-    // maybe print out some information about some of the Usage numbers that we know about
-    // The information comes from the USB document, HID Usage Tables
-    // https://www.usb.org/sites/default/files/documents/hut1_12v2.pdf
-
-    uint16_t usage_page = usage >> 16;
-    usage = usage & 0xffff;  // keep the lower part
-    //printUsageInfo(usage_page, usage);
-
     Serial.println();
   }
 }

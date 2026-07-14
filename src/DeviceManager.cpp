@@ -12,10 +12,6 @@ static std::string safeToString(const uint8_t *s) {
     return std::string(reinterpret_cast<const char *>(s));
 }
 
-static bool isK1Pro(uint16_t vendor_id, uint16_t product_id) {
-    return (vendor_id == USBVendorIDs::USB_VID_K1_PRO && product_id == USBProductIDs::USB_PID_K1_PRO)
-        || (vendor_id == USBVendorIDs::USB_VID_K1_PROEU && product_id == USBProductIDs::USB_PID_K1_PROEU);
-}
 
 DeviceManager::Slot::Slot(USBHost &host, uint8_t slotIndex)
     : hid_parser_1(host),
@@ -277,3 +273,9 @@ void DeviceManager::poll() {
         }
     }
 }
+
+bool DeviceManager::isK1Pro(uint16_t vendor_id, uint16_t product_id) {
+    return (vendor_id == USBVendorIDs::USB_VID_K1_PRO && product_id == USBProductIDs::USB_PID_K1_PRO)
+        || (vendor_id == USBVendorIDs::USB_VID_K1_PROEU && product_id == USBProductIDs::USB_PID_K1_PROEU);
+}
+
