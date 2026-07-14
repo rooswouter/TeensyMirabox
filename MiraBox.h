@@ -12,4 +12,5 @@
  * @endcode
  */
 
-#include "src/Mirabox.h"
+
+#include "src/DeviceManager.h"

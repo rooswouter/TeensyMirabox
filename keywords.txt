@@ -9,6 +9,7 @@
 DeviceManager	KEYWORD1
 StreamDock	KEYWORD1
 GifController	KEYWORD1
+GifLoader	KEYWORD1
 MiraBoxHIDInput	KEYWORD1
 LibUSBHIDAPI	KEYWORD1
 FeatureOption	KEYWORD1
@@ -84,6 +85,10 @@ clear_background_gif	KEYWORD2
 start_gif_loop	KEYWORD2
 stop_gif_loop	KEYWORD2
 gif_loop_status	KEYWORD2
+set_key_gif	KEYWORD2
+set_key_gif_data	KEYWORD2
+set_background_gif	KEYWORD2
+set_background_gif_data	KEYWORD2
 getPath	KEYWORD2
 get_serial_number	KEYWORD2
 get_device_type	KEYWORD2
@@ -114,6 +119,15 @@ start_animation_loop	KEYWORD2
 stop_animation_loop	KEYWORD2
 animation_loop_status	KEYWORD2
 update	KEYWORD2
+
+# GifLoader
+loadKeyGif	KEYWORD2
+loadBackgroundGif	KEYWORD2
+loadKeyGifFile	KEYWORD2
+loadBackgroundGifFile	KEYWORD2
+releaseKey	KEYWORD2
+releaseBackground	KEYWORD2
+releaseAll	KEYWORD2
 
 # K1Pro
 set_keyboard_backlight_brightness	KEYWORD2

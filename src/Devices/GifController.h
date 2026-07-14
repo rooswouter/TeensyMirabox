@@ -71,6 +71,16 @@ public:
      */
     void update();
 
+    /** @brief Callback invoked when a stream slot is removed or replaced. */
+    using StreamRemovedCallback = void (*)(int stream_index, void *context);
+
+    /**
+     * @brief Register a callback for stream removal (used by GifLoader to free owned buffers).
+     * @param callback Function called with the hardware key index or BACKGROUND_INDEX.
+     * @param context Opaque pointer passed to the callback.
+     */
+    void set_stream_removed_callback(StreamRemovedCallback callback, void *context);
+
 private:
     struct GifStreamStatus {
         const uint8_t *const *frames = nullptr;
@@ -98,4 +108,6 @@ private:
     size_t stream_count_ = 0;
     bool loop_enabled_ = false;
     bool running_ = true;
+    StreamRemovedCallback stream_removed_callback_ = nullptr;
+    void *stream_removed_context_ = nullptr;
 };

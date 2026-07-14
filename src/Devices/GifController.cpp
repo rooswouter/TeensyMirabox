@@ -24,6 +24,9 @@ GifController::GifStreamStatus *GifController::find_stream(int index) {
 
 void GifController::replace_stream(int index, const GifStreamStatus &status) {
     if (GifStreamStatus *existing = find_stream(index)) {
+        if (stream_removed_callback_ != nullptr) {
+            stream_removed_callback_(index, stream_removed_context_);
+        }
         *existing = status;
         return;
     }
@@ -37,6 +40,9 @@ void GifController::replace_stream(int index, const GifStreamStatus &status) {
 void GifController::remove_stream(int index) {
     for (size_t i = 0; i < stream_count_; ++i) {
         if (stream_indices_[i] == index) {
+            if (stream_removed_callback_ != nullptr) {
+                stream_removed_callback_(index, stream_removed_context_);
+            }
             for (size_t j = i + 1; j < stream_count_; ++j) {
                 streams_[j - 1] = streams_[j];
                 stream_indices_[j - 1] = stream_indices_[j];
@@ -48,6 +54,10 @@ void GifController::remove_stream(int index) {
 }
 
 int GifController::set_key_gif_stream(const uint8_t *const *frames, const size_t *frame_sizes, const int *delays, size_t frame_count, int key) {
+    if (!device_.feature_option.supportKeyGif) {
+        return -1;
+    }
+
     int hardware_key = 0;
     if (get_key_values(key, hardware_key) != 0 || frame_count == 0) {
         return -1;
@@ -136,9 +146,20 @@ bool GifController::animation_loop_status() const {
 }
 
 void GifController::close() {
+    while (stream_count_ > 0) {
+        const int index = stream_indices_[stream_count_ - 1];
+        if (stream_removed_callback_ != nullptr) {
+            stream_removed_callback_(index, stream_removed_context_);
+        }
+        --stream_count_;
+    }
     running_ = false;
     loop_enabled_ = false;
-    stream_count_ = 0;
+}
+
+void GifController::set_stream_removed_callback(StreamRemovedCallback callback, void *context) {
+    stream_removed_callback_ = callback;
+    stream_removed_context_ = context;
 }
 
 void GifController::update() {

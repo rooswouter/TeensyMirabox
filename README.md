@@ -39,7 +39,8 @@ The library auto-detects devices by USB VID/PID and instantiates the matching dr
 1. Copy or symlink this folder into your Arduino `libraries` directory, e.g.  
    `Documents/Arduino/libraries/MiraBox`
 2. Install **Teensyduino** with the **USBHost_t36** library enabled.
-3. Select a Teensy 3.6 or 4.x board and compile an example sketch.
+3. (Optional) Install **AnimatedGIF** and **JPEGENC** for GIF support — see [Animated GIFs](#animated-gifs-optional).
+4. Select a Teensy 3.6 or 4.x board and compile an example sketch.
 
 ## Quick start
 
@@ -98,6 +99,39 @@ Sketch
 with the {device name}\key directory to read the correctly scaled and rotated file.  per device. Use convert_images.py to create these images! 
 - `set_key_image(key, "file.jpg")` reads from the **SD card** root (or path relative to SD root).
 
+## Animated GIFs (optional)
+
+Key and background GIF animation requires the [AnimatedGIF](https://github.com/bitbank2/AnimatedGIF) and [JPEGENC](https://github.com/bitbank2/JPEGENC) libraries and a compile-time flag:
+
+```cpp
+#define ENABLE_ANIMATEDGIF
+#include <MiraBox.h>
+```
+
+Or add `-DENABLE_ANIMATEDGIF` to the Arduino compiler flags.
+
+Without the flag, `set_key_gif()` / `set_background_gif()` return `-1` and the library does not depend on those packages. The lower-level `set_key_gif_stream()` API (pre-decoded JPEG frames) always works.
+
+### SD card layout for GIFs
+
+| API | SD path |
+|-----|---------|
+| `set_key_gif(key, "anim.gif")` | `{device_type}/key/anim.gif` |
+| `set_background_gif("bg.gif")` | `{device_type}/background/bg.gif` |
+
+Use the same device-type folder names as for JPEG key images (e.g. `StreamDockN3/key/anim.gif`). Absolute paths starting with `/` are also supported.
+
+### GIF requirements
+
+- Canvas size must **exactly match** the device key or background dimensions (no scaling or rotation in v1).
+- Maximum file size: 512 KB (`GIF_MAX_FILE_BYTES`).
+- Maximum frames: 64 (`GIF_MAX_FRAMES`).
+- Maximum canvas: 480×480 (AnimatedGIF Teensy `MAX_WIDTH` limit). Background GIFs wider than 480 px are not supported.
+- Key GIFs require a JPEG key format (`ImageFileFormat::JPEG`); devices that use PNG keys (e.g. XL) are not supported for key GIFs in v1.
+
+Successful `set_key_gif()` / `set_background_gif()` calls upload frame 0 immediately and start the GIF loop automatically.
+
+See `examples/GifExample/GifExample.ino`.
 
 ## Input events
 
@@ -139,7 +173,7 @@ Leave both `false` in production sketches.
 |--------|-------------|
 | `examples/Mirabox/Mirabox.ino` | `DeviceManager` hotplug, images from SD, key callbacks |
 | `examples/k1pro/k1pro.ino` | Manual K1 Pro bring-up with serial commands |
-
+| `examples/GifExample/GifExample.ino` | Animated key GIF from SD (`ENABLE_ANIMATEDGIF`) |
 
 ## API reference
 

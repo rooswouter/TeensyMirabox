@@ -8,6 +8,7 @@
 #include "../KeyboardEvent.h"
 #include "../DeviceConfig.h"
 #include "GifController.h"
+#include "GifLoader.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -190,6 +191,32 @@ public:
     /** @return True if the GIF loop is running. */
     bool gif_loop_status() const;
 
+    /**
+     * @brief Load a GIF from the SD card and animate it on a key.
+     *
+     * Requires `ENABLE_ANIMATEDGIF` and the AnimatedGIF + JPEGENC libraries.
+     * @return 0 on success, -1 on failure or when GIF support is disabled.
+     */
+    int set_key_gif(int key, const char *filename);
+
+    /**
+     * @brief Load a GIF from memory and animate it on a key.
+     * @return 0 on success, -1 on failure or when GIF support is disabled.
+     */
+    int set_key_gif_data(int key, const uint8_t *data, size_t length);
+
+    /**
+     * @brief Load a background GIF from the SD card.
+     * @return 0 on success, -1 on failure or when GIF support is disabled.
+     */
+    int set_background_gif(const char *filename, int x = 0, int y = 0, uint8_t fb_layer = 0x00);
+
+    /**
+     * @brief Load a background GIF from memory.
+     * @return 0 on success, -1 on failure or when GIF support is disabled.
+     */
+    int set_background_gif_data(const uint8_t *data, size_t length, int x = 0, int y = 0, uint8_t fb_layer = 0x00);
+
     /** @return Device path or serial string. */
     std::string getPath() const;
 
@@ -283,8 +310,10 @@ protected:
     
 
     GifController gif_controller_;
+    GifLoader gif_loader_;
 
 private:
+    bool resolve_sd_path(const char *filename, const char *subdir, char *sd_path, size_t sd_path_len) const;
     void process_read_buffer(const uint8_t *data, size_t length);
     void service_heartbeat();
 

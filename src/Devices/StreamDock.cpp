@@ -26,11 +26,13 @@ const char* const device_type_names[] = {
 };
 
 StreamDock::StreamDock(LibUSBHIDAPI &transport_ref, const HidDeviceInfo &dev_info)
-    : transport(transport_ref), gif_controller_(*this) {
+    : transport(transport_ref), gif_controller_(*this), gif_loader_(*this, gif_controller_) {
     vendor_id = dev_info.vendor_id;
     product_id = dev_info.product_id;
     path = dev_info.path;
     serial_number = dev_info.serial_number;
+
+    gif_controller_.set_stream_removed_callback(GifLoader::streamRemovedThunk, &gif_loader_);
 
     if (!SD.begin(BUILTIN_SDCARD)) {
         Serial.println("SD card initialization failed!");
@@ -68,6 +70,7 @@ void StreamDock::close(bool notify) {
     }
 
     gif_controller_.close();
+    gif_loader_.releaseAll();
     run_poll_ = false;
 
     if (notify && notify_on_close_) {
@@ -202,6 +205,58 @@ bool StreamDock::gif_loop_status() const {
     return gif_controller_.gif_loop_status();
 }
 
+int StreamDock::set_key_gif(int key, const char *filename) {
+    if (filename == nullptr || filename[0] == '\0') {
+        return -1;
+    }
+
+    char sd_path[128];
+    if (!resolve_sd_path(filename, "key", sd_path, sizeof(sd_path))) {
+        return -1;
+    }
+
+    return gif_loader_.loadKeyGifFile(key, sd_path);
+}
+
+int StreamDock::set_key_gif_data(int key, const uint8_t *data, size_t length) {
+    return gif_loader_.loadKeyGif(key, data, length);
+}
+
+int StreamDock::set_background_gif(const char *filename, int x, int y, uint8_t fb_layer) {
+    if (filename == nullptr || filename[0] == '\0') {
+        return -1;
+    }
+
+    char sd_path[128];
+    if (!resolve_sd_path(filename, "background", sd_path, sizeof(sd_path))) {
+        return -1;
+    }
+
+    return gif_loader_.loadBackgroundGifFile(sd_path, x, y, fb_layer);
+}
+
+int StreamDock::set_background_gif_data(const uint8_t *data, size_t length, int x, int y, uint8_t fb_layer) {
+    return gif_loader_.loadBackgroundGif(data, length, x, y, fb_layer);
+}
+
+bool StreamDock::resolve_sd_path(const char *filename, const char *subdir, char *sd_path, size_t sd_path_len) const {
+    if (filename == nullptr || sd_path == nullptr || sd_path_len == 0) {
+        return false;
+    }
+
+    if (filename[0] == '/') {
+        return std::snprintf(sd_path, sd_path_len, "%s", filename) > 0;
+    }
+
+    const int type_index = static_cast<int>(feature_option.deviceType);
+    const char *folder = device_type_names[0];
+    if (type_index >= 0 && type_index < static_cast<int>(sizeof(device_type_names) / sizeof(device_type_names[0]))) {
+        folder = device_type_names[type_index];
+    }
+
+    return std::snprintf(sd_path, sd_path_len, "%s/%s/%s", folder, subdir, filename) > 0;
+}
+
 std::string StreamDock::getPath() const {
     return path;
 }
@@ -326,19 +381,11 @@ int StreamDock::set_key_image(int key, const char *filename)
         return -1;
     }
 
-    // Open file from SD card, 50kb max?
     uint8_t buffer[50 * 1024];
 
     char sd_path[128];
-    if (filename[0] == '/') {
-        std::snprintf(sd_path, sizeof(sd_path), "%s", filename);
-    } else {
-        const int type_index = static_cast<int>(feature_option.deviceType);
-        const char *folder = device_type_names[0];
-        if (type_index >= 0 && type_index < static_cast<int>(sizeof(device_type_names) / sizeof(device_type_names[0]))) {
-            folder = device_type_names[type_index];
-        }
-        std::snprintf(sd_path, sizeof(sd_path), "%s/key/%s", folder, filename);
+    if (!resolve_sd_path(filename, "key", sd_path, sizeof(sd_path))) {
+        return -1;
     }
 
     File file = SD.open(sd_path, FILE_READ);
