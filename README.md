@@ -104,11 +104,11 @@ with the {device name}\key directory to read the correctly scaled and rotated fi
 Key and background GIF animation requires the [AnimatedGIF](https://github.com/bitbank2/AnimatedGIF) and [JPEGENC](https://github.com/bitbank2/JPEGENC) libraries and a compile-time flag:
 
 ```cpp
-#define ENABLE_ANIMATEDGIF
+#define WITH_ANIMATEDGIF
 #include <MiraBox.h>
 ```
 
-Or add `-DENABLE_ANIMATEDGIF` to the Arduino compiler flags.
+Or add `-DWITH_ANIMATEDGIF` to the Arduino compiler flags.
 
 Without the flag, `set_key_gif()` / `set_background_gif()` return `-1` and the library does not depend on those packages. The lower-level `set_key_gif_stream()` API (pre-decoded JPEG frames) always works.
 
@@ -191,7 +191,7 @@ Leave both `false` in production sketches.
 |--------|-------------|
 | `examples/Mirabox/Mirabox.ino` | `DeviceManager` hotplug, images from SD, key callbacks |
 | `examples/k1pro/k1pro.ino` | Manual K1 Pro bring-up with serial commands |
-| `examples/GifExample/GifExample.ino` | Animated key GIF from SD (`ENABLE_ANIMATEDGIF`) |
+| `examples/GifExample/GifExample.ino` | Animated key GIF from SD (`WITH_ANIMATEDGIF`) |
 
 ## API reference
 

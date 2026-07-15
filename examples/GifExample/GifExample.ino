@@ -1,6 +1,7 @@
 #include <USBHost_t36.h>
 #include <MiraBox.h>
 
+
 USBHost myusb;
 DeviceManager dm(myusb);
 
@@ -15,7 +16,7 @@ void onAdded(StreamDock *device) {
         device->set_key_gif_shared(i, shared);
       }
   } else {
-      Serial.println("set_key_gif failed (ENABLE_ANIMATEDGIF defined? GIF on SD?)");
+      Serial.println("set_key_gif failed (WITH_ANIMATEDGIF defined? GIF on SD?)");
   }
   device->set_key_callback(key_callback);
 }

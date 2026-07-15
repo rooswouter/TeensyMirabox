@@ -1,3 +1,4 @@
+#include "MiraBox.h"
 #include "GifLoader.h"
 
 #include "GifConfig.h"
@@ -10,7 +11,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#ifdef ENABLE_ANIMATEDGIF
+#ifdef WITH_ANIMATEDGIF
 #include <AnimatedGIF.h>
 #include <JPEGENC.h>
 #include <SD.h>
@@ -185,7 +186,7 @@ GifSharedStream GifLoader::exportBackgroundStream() const {
     return shared;
 }
 
-#ifndef ENABLE_ANIMATEDGIF
+#ifndef WITH_ANIMATEDGIF
 
 int GifLoader::loadKeyGif(int, const uint8_t *, size_t) {
     return -1;

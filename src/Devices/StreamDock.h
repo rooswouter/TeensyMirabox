@@ -197,7 +197,7 @@ public:
     /**
      * @brief Load a GIF from the SD card and animate it on a key.
      *
-     * Requires `ENABLE_ANIMATEDGIF` and the AnimatedGIF + JPEGENC libraries.
+     * Requires `WITH_ANIMATEDGIF` and the AnimatedGIF + JPEGENC libraries.
      * @return 0 on success, -1 on failure or when GIF support is disabled.
      */
     int set_key_gif(int key, const char *filename);

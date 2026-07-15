@@ -2,7 +2,7 @@
 
 /**
  * @file GifConfig.h
- * @brief Compile-time limits for GIF decode/encode (ENABLE_ANIMATEDGIF).
+ * @brief Compile-time limits for GIF decode/encode (WITH_ANIMATEDGIF).
  */
 
 #ifndef GIF_MAX_FILE_BYTES

@@ -1,7 +1,5 @@
 #pragma once
 
-#define ENABLE_ANIMATEDGIF
-
 // Maximum number of GIF streams (including shared streams) to be used by the GifLoader.
 #define MAX_STREAMS 16
 #include <cstddef>
@@ -14,7 +12,7 @@ class GifController;
  * @file GifLoader.h
  * @brief Decode GIF files to JPEG frames for GifController playback.
  *
- * Requires `ENABLE_ANIMATEDGIF` and the AnimatedGIF + JPEGENC libraries.
+ * Requires `WITH_ANIMATEDGIF` and the AnimatedGIF + JPEGENC libraries.
  * When the flag is undefined, all load methods return -1.
  */
 
@@ -98,7 +96,7 @@ private:
     int registerKeyStream(int key, int hardware_key, GifSharedStream::GifStreamData *data);
     int registerBackgroundStream(GifSharedStream::GifStreamData *data, int x, int y, uint8_t fb_layer);
 
-#ifdef ENABLE_ANIMATEDGIF
+#ifdef WITH_ANIMATEDGIF
     int decodeGifToStream(const uint8_t *data, size_t length, int target_width, int target_height, GifSharedStream::GifStreamData *&out);
 #endif
 };
